@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AravAyan — BB Speech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #12121a;
+      --border:    rgba(255,255,255,0.07);
+      --gold:      #d4a843;
+      --gold-dim:  #8a6820;
+      --text:      #e8e4dc;
+      --muted:     #6b6860;
+      --radius:    16px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+    }
+
+    /* ── Radial glow ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20vh; left: 50%;
+      transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(212,168,67,0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 60px 24px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown 0.9s ease both;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Decorative rule ── */
+    .rule {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 28px; width: 220px;
+    }
+    .rule::before, .rule::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim));
+    }
+    .rule::after { background: linear-gradient(to left, transparent, var(--gold-dim)); }
+    .rule-diamond {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    /* ── Video card ── */
+    .video-card {
+      width: 100%;
+      max-width: 860px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,168,67,0.08);
+      animation: fadeUp 1s 0.25s ease both;
+    }
+
+    /* top accent bar */
+    .card-accent {
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-dim) 100%);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+
+    .card-footer {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(212,168,67,0.1);
+      border: 1px solid rgba(212,168,67,0.2);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 52px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      animation: fadeUp 1s 0.5s ease both;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header>
+      <p class="eyebrow">A Special Moment</p>
+      <h1>AravAyan's <span>BB Speech</span></h1>
+      <p class="subtitle">A memory worth revisiting, anytime.</p>
+      <div class="rule" style="margin:28px auto 0;">
+        <div class="rule-diamond"></div>
+      </div>
+    </header>
+
+    <div class="video-card">
+      <div class="card-accent"></div>
+      <video
+        controls
+        preload="metadata"
+        poster=""
+        title="AravAyan BB Speech"
+      >
+        <!--
+          Place your video file (AravAyan_BBSpeech.mp4) in the same folder
+          as this index.html and push both to your GitHub Pages repo.
+        -->
+        <source src="AravAyan_BBSpeech.mp4" type="video/mp4" />
+        Your browser does not support HTML5 video.
+      </video>
+      <div class="card-footer">
+        <span class="card-label">AravAyan_BBSpeech.mp4</span>
+        <span class="badge">&#9654;&nbsp; Play anytime</span>
+      </div>
+    </div>
+
+    <footer>
+      Hosted on GitHub Pages &nbsp;·&nbsp; For the family, with love
+    </footer>
+
+  </div>
+</body>
+</html>
